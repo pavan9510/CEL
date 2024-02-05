@@ -1,0 +1,6 @@
+n=input('enter tha value of n:');
+sum=0;
+for i=1:n
+    sum=i+sum;
+
+end
