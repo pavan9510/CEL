@@ -1,0 +1,24 @@
+% Define your experimental data
+% For example, let's say you have temperature readings as x and corresponding heat transfer readings as y
+x = [1, 2, 3, 4, 5];
+y = [22.4, 24.7, 27.1, 32.1, 35.6];
+
+% Choose the degree of the polynomial for fitting
+degree = 2; % You can adjust this depending on your data and desired fit
+
+% Perform polynomial curve fitting
+coefficients = polyfit(x, y, degree);
+
+% Generate a higher resolution x for plotting the fitted curve
+x_fit = linspace(min(x), max(x), 100);
+
+% Evaluate the fitted polynomial at x_fit
+y_fit = polyval(coefficients, x_fit);
+
+% Plot the original data and the fitted curve
+figure;
+plot(x, y, 'o', x_fit, y_fit, '-');
+xlabel('Temperature');
+ylabel('Heat Transfer');
+title('Curve Fitting for Heat Transfer Experiment');
+legend('Experimental Data', 'Fitted Curve');
