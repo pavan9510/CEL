@@ -1,0 +1,71 @@
+% Parameters
+L = 0.1; % Length of the block (m)
+W = 0.1; % Width of the block (m)
+H = 0.1; % Height of the block (m)
+Nx = 50; % Number of grid points along x-axis
+Ny = 50; % Number of grid points along y-axis
+Nz = 50; % Number of grid points along z-axis
+dx = L / (Nx - 1); % Grid spacing along x-axis
+dy = W / (Ny - 1); % Grid spacing along y-axis
+dz = H / (Nz - 1); % Grid spacing along z-axis
+dt = 0.1; % Time step (s)
+t_final = 3600; % Total simulation time (s)
+alpha = 4.2e-6; % Thermal diffusivity of stainless steel (m^2/s)
+T_initial = 25; % Initial temperature (°C)
+
+% Boundary temperatures
+T_right = 50; % Temperature at right surface (°C)
+T_bottom = 75; % Temperature at bottom surface (°C)
+T_top = 25; % Temperature at top surface (°C)
+T_front = 60; % Temperature at front surface (°C)
+T_back = 40; % Temperature at back surface (°C)
+
+% Convective heat transfer coefficient for air flow
+h = 10; % Convective heat transfer coefficient (W/m^2K)
+T_air = 30; % Air temperature (°C)
+
+% Initialize temperature matrix
+T = ones(Nx, Ny, Nz) * T_initial;
+
+% Apply boundary conditions
+T(Nx, :, :) = T_right;
+T(:, 1, :) = T_bottom;
+T(:, Ny, :) = T_top;
+T(:, :, 1) = T_front;
+T(:, :, Nz) = T_back;
+
+% Main loop for time integration
+num_steps = t_final / dt;
+for step = 1:num_steps
+    % Compute temperature at next time step using finite difference method
+    T_new = T;
+    for i = 2:Nx-1
+        for j = 2:Ny-1
+            for k = 2:Nz-1
+                % Add convective heat transfer term on the left surface
+                if i == 1
+                    % Convective heat transfer using Newton's law of cooling
+                    q_convective = h * (T_air - T(i, j, k));
+                    T_new(i, j, k) = T(i, j, k) + alpha * dt * ((T(i+1, j, k) - 2*T(i, j, k) + T(i-1, j, k)) / dx^2 + ...
+                                                                  (T(i, j+1, k) - 2*T(i, j, k) + T(i, j-1, k)) / dy^2 + ...
+                                                                  (T(i, j, k+1) - 2*T(i, j, k) + T(i, j, k-1)) / dz^2) + ...
+                                                                  dt * q_convective;
+                else
+                    T_new(i, j, k) = T(i, j, k) + alpha * dt * ((T(i+1, j, k) - 2*T(i, j, k) + T(i-1, j, k)) / dx^2 + ...
+                                                                  (T(i, j+1, k) - 2*T(i, j, k) + T(i, j-1, k)) / dy^2 + ...
+                                                                  (T(i, j, k+1) - 2*T(i, j, k) + T(i, j, k-1)) / dz^2);
+                end
+            end
+        end
+    end
+    T = T_new;
+end
+
+% Visualize results (optional)
+[X, Y, Z] = meshgrid(1:Nx, 1:Ny, 1:Nz);
+slice(X, Y, Z, T, Nx/2, Ny/2, Nz/2);
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+title('Temperature Distribution within Stainless Steel Block with Air Flow');
+colorbar;
