@@ -1,0 +1,56 @@
+% Given data points
+x = [0, 2, 4, 6, 9, 11, 12, 15, 17, 19];
+y = [5, 6, 7, 6, 9, 8, 8, 10, 12, 12];
+
+% Manual Linear Regression Calculation
+n = length(x);
+x_mean = mean(x);
+y_mean = mean(y);
+
+numerator = sum((x - x_mean) .* (y - y_mean));
+denominator = sum((x - x_mean).^2);
+m = numerator / denominator;
+b = y_mean - m * x_mean;
+
+% Plot the data points and linear regression line
+figure;
+plot(x, y, 'o', 'DisplayName', 'Data');
+hold on;
+x_line = linspace(min(x), max(x), 100);
+y_line = m * x_line + b;
+plot(x_line, y_line, 'r', 'DisplayName', 'Linear Regression');
+xlabel('x');
+ylabel('y');
+title('Linear Regression');
+legend;
+grid on;
+
+% Fit a linear model using Curve Fitting Toolbox
+linearFit = fit(x', y', 'poly1');  % Fit a first-degree polynomial (linear)
+figure;
+plot(linearFit, x, y);  % Plot the linear fit
+xlabel('x');
+ylabel('y');
+title('Linear Fit using Curve Fitting Toolbox');
+grid on;
+
+% Evaluate goodness of fit for linear regression
+linearFit_rmse = sqrt(mean((feval(linearFit, x) - y).^2));  % Root Mean Squared Error (RMSE)
+linearFit_r2 = 1 - sum((y - feval(linearFit, x)).^2) / sum((y - mean(y)).^2);  % R-squared (Coefficient of Determination)
+disp(['Linear Fit RMSE: ', num2str(linearFit_rmse)]);
+disp(['Linear Fit R-squared: ', num2str(linearFit_r2)]);
+
+% Fit a polynomial model (2nd degree) using Curve Fitting Toolbox
+poly2Fit = fit(x', y', 'poly2');  % Fit a second-degree polynomial
+figure;
+plot(poly2Fit, x, y);  % Plot the polynomial fit
+xlabel('x');
+ylabel('y');
+title('Polynomial (2nd Degree) Fit using Curve Fitting Toolbox');
+grid on;
+
+% Evaluate goodness of fit for polynomial (2nd degree) regression
+poly2Fit_rmse = sqrt(mean((feval(poly2Fit, x) - y).^2));  % Root Mean Squared Error (RMSE)
+poly2Fit_r2 = 1 - sum((y - feval(poly2Fit, x)).^2) / sum((y - mean(y)).^2);  % R-squared (Coefficient of Determination)
+disp(['Polynomial Fit (2nd Degree) RMSE: ', num2str(poly2Fit_rmse)]);
+disp(['Polynomial Fit (2nd Degree) R-squared: ', num2str(poly2Fit_r2)]);
