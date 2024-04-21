@@ -1,0 +1,46 @@
+x = [1, 2, 2.5, 3, 4, 5];
+y = [0, 5, 7, 6.5, 2, 0];
+p = 3.4;
+
+% Lagrange interpolation
+n = length(x);
+L = zeros(1, n);
+result = 0;
+
+for i = 1:n
+    % Compute the ith Lagrange basis polynomial at p
+    term = 1;
+    for j = 1:n
+        if j ~= i
+            term = term * (p - x(j)) / (x(i) - x(j));
+        end
+    end
+    L(i) = term;
+    
+    % Compute the interpolated value at p
+    result = result + y(i) * L(i);
+end
+
+result;  % Interpolated value at p
+
+% Plotting for various orders of interpolation
+xx = linspace(min(x), max(x), 1000);
+yy = zeros(length(xx), n);
+
+for k = 1:length(xx)
+    for m = 1:n
+        % Compute interpolated values for each order
+        for j = 1:m
+            yy(k, m) = yy(k, m) + y(j) * L(j);
+        end
+    end
+end
+
+% Plotting
+figure;
+plot(x, y, '-.', xx, yy(:,1), 'g', xx, yy(:,2), 'r', xx, yy(:,3), 'b');
+xlabel('x');
+ylabel('y');
+title('Lagrange Interpolation');
+legend('Data Points', '1st Order', '2nd Order', '3rd Order');
+grid on;
