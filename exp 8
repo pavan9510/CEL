@@ -1,0 +1,24 @@
+close all
+clear
+clc
+% Data Points
+x = [0.6 1.5 1.6 2.5 3.5];
+f = [0.9036 0.3734 0.3261 0.08422 0.01596];
+p = polyfit(x,f,length(x)-1); % fit a curve to the data
+pd = polyder(p); % differentiate the curve
+fd = polyval(pd, x); % find out approx. derivative of f(x) at given x locations
+fd_exact = (5 - 10*x) .* exp(-2*x); % exact derivative
+error = abs(fd_exact - fd); % absolute error
+fprintf('%-5s\t%-20s\t%-20s\t%-20s\n', 'x', 'Approx. Derivative', 'Exact Derivative', 'Absolute Error')
+for i = 1:length(x)
+fprintf('%-5.2f\t%-20.8f\t%-20.8f\t%-20.8f\n', x(i), fd(i), fd_exact(i),error(i))
+end        
+
+
+result 
+x    	Approx. Derivative  	Exact Derivative    	Absolute Error      
+0.60 	-0.59540650         	-0.30119421         	0.29421229          
+1.50 	-0.49175728         	-0.49787068         	0.00611340          
+1.60 	-0.45377886         	-0.44838424         	0.00539461          
+2.50 	-0.09964543         	-0.13475894         	0.03511351          
+3.50 	-0.18198100         	-0.02735646  
